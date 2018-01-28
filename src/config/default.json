@@ -1,0 +1,7 @@
+{
+    "protocol": "http",
+    "wsProtocol": "ws",
+    "location": "localhost",
+    "port": 3000,
+    "wsPort": 4000
+}

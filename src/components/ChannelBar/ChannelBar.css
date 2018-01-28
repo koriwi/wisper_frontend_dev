@@ -1,0 +1,33 @@
+.channel-bar {
+    list-style-type: none;
+    margin: 0;
+    height: 100%;
+    width: 250px;
+    padding: 0px;
+    background-color: rgb(63, 63, 63);
+    border-right: 2px solid #111;
+}
+
+.channel-bar-list-item {
+    padding: 12px;
+    color: white;
+    border-bottom: 1px solid #333;
+    background-color: rgb(39, 39, 39);
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    cursor: pointer;
+    user-select: none;
+}
+
+.channel-bar-list-item.active {
+    background-color: rgb(0, 151, 88);
+}
+
+.channel-bar-list-item:hover {
+    color: #555;
+    background-color: rgb(230, 230, 230);
+}
+
+.channel-bar-list-item.active:hover {
+    color: white;
+    background-color: rgb(0, 151, 88);
+}

@@ -1,0 +1,28 @@
+.text-chat {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.text-chat-input-area {
+    resize: none;
+    height: 180px;
+    background-color: rgb(39, 39, 39);
+    color: white;
+    font-size: 16px;
+}
+
+.text-chat-history {
+    height: 100%;
+    overflow-y: scroll;
+    background-color: rgb(63, 63, 63);
+}
+
+.text-chat-history p {
+    margin-left: 8px;
+    background-color: #555;
+    color: white;
+    padding: 8px;
+    border-radius: 3px;
+    border: 1px solid black;
+}
