@@ -35,4 +35,5 @@
 .notificationDot {
     color: red;
     font-weight: bold;
+    float: right;
 }
