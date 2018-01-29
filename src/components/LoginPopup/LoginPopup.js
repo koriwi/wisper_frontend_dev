@@ -5,6 +5,7 @@ export class LoginPopup extends Component {
     
     callParent(e) {
         e.preventDefault();
+        if (this.refs.name.value.length < 3) return;
         this.props.connect(this.refs.name.value);
     }
 
