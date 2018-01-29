@@ -7,14 +7,17 @@ export class TextChat extends Component {
         this.state = {
             messages: {}
         };
+        this.type = "TEXT_MESSAGE";
     }
 
     componentDidMount() {
-        this.props.onmessage(this.messageReceived.bind(this));
+        this.props.onmessage({
+            f: this.messageReceived.bind(this),
+            type: this.type
+        });
     }
     
-    messageReceived(e) {
-        const data = JSON.parse(e.data);
+    messageReceived(data) {
         let messages = { ...this.state.messages };
 
         if (!messages[data.to]) messages[data.to] = [];
@@ -30,6 +33,7 @@ export class TextChat extends Component {
         e.preventDefault();
         if (this.refs.clearMe.value.trim().length === 0) return;
         const payload = JSON.stringify({
+            type: this.type,
             target: this.props.channel,
             text: this.refs.clearMe.value.trim()
         });

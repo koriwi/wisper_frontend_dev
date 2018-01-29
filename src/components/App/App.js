@@ -41,10 +41,11 @@ class App extends Component {
         `${config.wsProtocol}://${config.location}:${config.wsPort}`,
         ["sessionid", this.state.sessionid]
       );
-      ws.onopen = (e) => { };
+      ws.onopen = (e) => {  };
       ws.onmessage = (message) => {
-        this.state.messageListener.forEach(listener => {
-          listener(message);
+        const parsed = JSON.parse(message.data);
+        this.state.messageListener.filter(listener => listener.type === parsed.type).forEach(listener => {
+          listener.f(parsed);
         });
       }
       this.setState({
