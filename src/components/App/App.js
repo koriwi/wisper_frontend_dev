@@ -12,6 +12,8 @@ class App extends Component {
     this.state = {
       channel: 0,
       sessionid: null,
+      ws: null,
+      messageListener:[]
     };
   }
 
@@ -25,6 +27,35 @@ class App extends Component {
     this.setState({ ...this.state, sessionid });
   }
   
+  registerMessageListener(listener) {
+    const messageListener = this.state.messageListener.slice();
+    messageListener.push(listener);
+
+    this.setState({
+      ...this.state,
+      messageListener
+    });
+  }
+
+  componentDidUpdate() {
+    if (this.state.sessionid && !this.state.ws) {
+      const ws = new WebSocket(
+        `${config.wsProtocol}://${config.location}:${config.wsPort}`,
+        ["sessionid", this.state.sessionid]
+      );
+      ws.onopen = (e) => { };
+      ws.onmessage = (message) => {
+        this.state.messageListener.forEach(listener => {
+          listener(message);
+        });
+      }
+      this.setState({
+        ...this.state,
+        ws
+      })
+    }
+  }
+
   changeChannel(channel) {
     this.setState({
       ...this.state, channel
@@ -46,7 +77,12 @@ class App extends Component {
           hide={!!this.state.sessionid}
         />  
         <ChannelBar channelChange={this.changeChannel.bind(this)}/>
-        <TextChat channel={this.state.channel} sessionid={this.state.sessionid}/>
+        <TextChat
+          channel={this.state.channel}
+          sessionid={this.state.sessionid}
+          onmessage={this.registerMessageListener.bind(this)}
+          ws={this.state.ws}
+        />
       </div>
     );
   }

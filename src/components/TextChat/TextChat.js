@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './TextChat.css';
-const config = require('../../config/default.json');
+
 export class TextChat extends Component {
     constructor() {
         super();
@@ -8,17 +8,12 @@ export class TextChat extends Component {
             messages: {}
         };
     }
-    async componentDidUpdate() {
-        if (this.props.sessionid && !this.ws) {   
-            const sessionid = this.props.sessionid;
-            this.ws = new WebSocket(`${config.wsProtocol}://${config.location}:${config.wsPort}/guest/create`, ["sessionid",sessionid]);   
-            this.ws.onopen = (e) => {};
-            this.ws.onmessage = this.messageReceived.bind(this);
-        }
-    }
 
+    componentDidMount() {
+        this.props.onmessage(this.messageReceived.bind(this));
+    }
+    
     messageReceived(e) {
-        // this doesnt look right :-/
         const data = JSON.parse(e.data);
         let messages = { ...this.state.messages };
 
@@ -32,12 +27,13 @@ export class TextChat extends Component {
     }
 
     checkIfEnter(e) {
-        if (e.keyCode !== 13) return; 
+        e.preventDefault();
+        if (this.refs.clearMe.value.trim().length === 0) return;
         const payload = JSON.stringify({
             target: this.props.channel,
             text: this.refs.clearMe.value.trim()
         });
-        this.ws.send(payload);
+        this.props.ws.send(payload);
         this.refs.clearMe.value = "";
     }
    
@@ -59,12 +55,12 @@ export class TextChat extends Component {
                 >
                 {this.renderMessages()}    
                 </div>
-                <textarea
-                    className="text-chat-input-area"
-                    onKeyUp={this.checkIfEnter.bind(this)}
-                    ref="clearMe"
-                >    
-                </textarea>
+                <form onSubmit={this.checkIfEnter.bind(this)}>
+                    <input
+                        className="text-chat-input-area"
+                        ref="clearMe"
+                    />
+                </form>
             </div>
         );
     }
