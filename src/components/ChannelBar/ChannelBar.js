@@ -18,11 +18,13 @@ export class ChannelBar extends Component {
     }
 
     componentDidMount() {
-        this.props.onmessage(this.messageReceived.bind(this));
+        this.props.onmessage({
+            f: this.messageReceived.bind(this),
+            type: "TEXT_MESSAGE"
+        });
     }
 
-    messageReceived(e) {
-        const data = JSON.parse(e.data);
+    messageReceived(data) {
         const targetChannel = this.state.channelList.findIndex(channel => channel.channelname === data.to);
         if (this.props.channel === data.to) return;
 
