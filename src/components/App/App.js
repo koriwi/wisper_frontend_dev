@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import * as axios from "axios";
+import { post } from '../../lib/httprequest';
 import { ChannelBar } from '../ChannelBar/ChannelBar';
 import { TextChat } from '../TextChat/TextChat';
 import { LoginPopup } from '../LoginPopup/LoginPopup';
@@ -17,11 +17,11 @@ class App extends Component {
 
   async loginAsGuest(username) {
     console.log(config);
-    const response = await axios.post(
+    const response = await post(
       `${config.protocol}://${config.location}:${config.port}/guest/create`,
       { username }
     );
-    const sessionid = response.data.user.sessionid;
+    const sessionid = response.user.sessionid;
     this.setState({ ...this.state, sessionid });
   }
   

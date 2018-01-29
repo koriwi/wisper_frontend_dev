@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import * as axios from 'axios';
+import { get } from "../../lib/httprequest";
 import './ChannelBar.css';
 const config = require('../../config/default.json');
 export class ChannelBar extends Component {
@@ -11,8 +11,8 @@ export class ChannelBar extends Component {
         };
     }
     async componentWillMount() {
-        const response = await axios.get(`${config.protocol}://${config.location}:${config.port}/channel`);
-        const channelList = response.data.channel.sort(this.compare);
+        const response = await get(`${config.protocol}://${config.location}:${config.port}/channel`);
+        const channelList = response.channel.sort(this.compare);
         this.setActive(channelList[0].channelname);
         this.setState({ ...this.state, channelList});
     }
