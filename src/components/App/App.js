@@ -9,6 +9,7 @@ const config = require('../../config/default.json');
 class App extends Component {
   constructor() {
     super()
+    this.ml = [];
     this.state = {
       channel: 0,
       sessionid: null,
@@ -18,7 +19,6 @@ class App extends Component {
   }
 
   async loginAsGuest(username) {
-    console.log(config);
     const response = await post(
       `${config.protocol}://${config.location}:${config.port}/guest/create`,
       { username }
@@ -28,12 +28,10 @@ class App extends Component {
   }
   
   registerMessageListener(listener) {
-    const messageListener = this.state.messageListener.slice();
-    messageListener.push(listener);
-
+    this.ml.push(listener);
     this.setState({
       ...this.state,
-      messageListener
+      messageListener: this.ml
     });
   }
 
@@ -76,7 +74,11 @@ class App extends Component {
           connect={this.loginAsGuest.bind(this)}
           hide={!!this.state.sessionid}
         />  
-        <ChannelBar channelChange={this.changeChannel.bind(this)}/>
+        <ChannelBar
+          channelChange={this.changeChannel.bind(this)}
+          channel={this.state.channel}
+          onmessage={this.registerMessageListener.bind(this)}
+        />
         <TextChat
           channel={this.state.channel}
           sessionid={this.state.sessionid}

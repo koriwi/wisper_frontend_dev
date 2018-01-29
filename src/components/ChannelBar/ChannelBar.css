@@ -31,3 +31,8 @@
     color: white;
     background-color: rgb(0, 151, 88);
 }
+
+.notificationDot {
+    color: red;
+    font-weight: bold;
+}

@@ -13,25 +13,54 @@ export class ChannelBar extends Component {
     async componentWillMount() {
         const response = await get(`${config.protocol}://${config.location}:${config.port}/channel`);
         const channelList = response.channel.sort(this.compare);
+        this.setState({ ...this.state, channelList });
         this.setActive(channelList[0].channelname);
-        this.setState({ ...this.state, channelList});
+    }
+
+    componentDidMount() {
+        this.props.onmessage(this.messageReceived.bind(this));
+    }
+
+    messageReceived(e) {
+        const data = JSON.parse(e.data);
+        const targetChannel = this.state.channelList.findIndex(channel => channel.channelname === data.to);
+        if (this.props.channel === data.to) return;
+
+        const cl = this.state.channelList.slice();
+
+        cl[targetChannel].unread = true;
+        this.setState({
+            ...this.state,
+            channelList: cl
+        })
+      
     }
 
     setActive(id) {
-        this.setState({ ...this.state, activeChannel: id });
         this.props.channelChange(id);
+        const index = this.state.channelList.findIndex(channel => {
+            return channel.channelname === id
+        });
+        if (this.state.channelList[index].unread) {
+            const cl = this.state.channelList.slice();
+
+            cl[index].unread = false;
+            this.setState({
+                ...this.state,
+                channelList: cl
+            }) 
+        }
     }
 
     compare(a, b) {
-        if (a.position < b.position) return -1;
-        if (a.position > b.position) return 1;
-        return 0;
+        return a.position - b.position;
     }
 
     renderList() {
         return this.state.channelList.map(channel => {
             let classString = "channel-bar-list-item";
-            if (channel.channelname === this.state.activeChannel)
+            const notificationDot = channel.unread ? <span className="notificationDot"> O </span> : "";
+            if (channel.channelname === this.props.channel)
                 classString = `${classString} active`;    
             return (
                 <li
@@ -39,9 +68,10 @@ export class ChannelBar extends Component {
                     onClick={() => this.setActive(channel.channelname)}
                     key={channel.channelname}
                 >
-                    <div className="channel-name">
+                    <span className="channel-name">
                         {channel.channelname}
-                    </div>
+                    </span>
+                    {notificationDot}
                 </li>
             )
         });
