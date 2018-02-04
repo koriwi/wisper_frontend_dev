@@ -4,7 +4,7 @@ export function get(url) {
         xmlhttp.open("get", url);
         //xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.onload = (data) => {
-           resolve(JSON.parse(xmlhttp.responseText));
+            resolve({ data: JSON.parse(xmlhttp.responseText), xmlhttp });
         };
         xmlhttp.send();
     });
@@ -16,8 +16,8 @@ export function post(url, data) {
         xmlhttp.open("post", url);
         xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.onload = () => {
-            resolve(JSON.parse(xmlhttp.responseText));
+            resolve({ data: JSON.parse(xmlhttp.responseText), xmlhttp  });
         };
         xmlhttp.send(JSON.stringify(data));
     });
-}
+}   

@@ -12,7 +12,7 @@ export class ChannelBar extends Component {
     }
     async componentWillMount() {
         const response = await get(`${config.protocol}://${config.location}:${config.port}/channel`);
-        const channelList = response.channel.sort(this.compare);
+        const channelList = response.data.channel.sort(this.compare);
         this.setState({ ...this.state, channelList });
         this.setActive(channelList[0].channelname);
     }

@@ -17,16 +17,36 @@ class App extends Component {
       messageListener:[]
     };
   }
-
-  async loginAsGuest(username) {
-    const response = await post(
-      `${config.protocol}://${config.location}:${config.port}/guest/create`,
-      { username }
-    );
-    const sessionid = response.user.sessionid;
-    this.setState({ ...this.state, sessionid });
+  componentWillMount() {
+    const sessionid = localStorage.getItem("sessionid");
+    if (sessionid) {
+      this.setSessionID(sessionid);
+    }
   }
-  
+  async login(data) {
+    let response;
+    if (data.mode === "guest") {
+      response = await post(
+        `${config.protocol}://${config.location}:${config.port}/guest/create`,
+        { username: data.name }
+      );
+      
+    }
+
+    if (data.mode === "login") {
+      response = await post(
+        `${config.protocol}://${config.location}:${config.port}/login`,
+        { email: data.email, password: data.password }
+      )
+      if (response.xmlhttp.status !== 200) {
+        alert(response.data.message);
+        return;
+      }  
+    }
+    const sessionid = response.data.sessionid;
+    this.setSessionID(sessionid);
+  }
+
   registerMessageListener(listener) {
     this.ml.push(listener);
     this.setState({
@@ -66,13 +86,13 @@ class App extends Component {
       ...this.state,
       sessionid
     });
-    alert("logged in with " + sessionid);
+    localStorage.setItem("sessionid", sessionid);
   }
   render() {
     return (
       <div className="App">
         <LoginPopup
-          connect={this.loginAsGuest.bind(this)}
+          connect={this.login.bind(this)}
           hide={!!this.state.sessionid}
         />  
         <ChannelBar
