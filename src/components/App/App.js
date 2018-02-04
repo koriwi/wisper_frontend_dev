@@ -39,7 +39,7 @@ class App extends Component {
         { email: data.email, password: data.password }
       )
       if (response.xmlhttp.status !== 200) {
-        alert(response.data.message);
+        alert(response.data.error);
         return;
       }  
     }
