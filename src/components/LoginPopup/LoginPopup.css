@@ -12,19 +12,35 @@
 
 .LoginPopup-choose {
     background-color: white;
-    border: 1px solid black;
-    border-radius: 5px;
-    width: 250px;
-    height: 100px;
+    border: 1px solid rgba(0, 0, 0, 0.726);
+    border-radius: 3px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     position: relative;
+    overflow: hidden;
 }
 
-.LoginPopup-choose h4 {
+.LoginPopup-header {
+    background-color: rgb(0, 151, 88);
+    padding: 24px;
+    width: 100%;
+}
+
+.LoginPopup-body {
+    padding: 24px;
+}
+
+.LoginPopup-footer {
+    padding: 8px 8px 8px 24px;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.LoginPopup-header h1 {
     margin: 0;
+    color: white
 }
 
 .is-hidden {
@@ -41,4 +57,8 @@
     border-bottom: 0;
     cursor: pointer;
     font-size: 22px;
+}
+
+.submit-button {
+    float: right;
 }

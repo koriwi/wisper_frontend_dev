@@ -3,18 +3,24 @@ import { post } from '../../lib/httprequest';
 import { ChannelBar } from '../ChannelBar/ChannelBar';
 import { TextChat } from '../TextChat/TextChat';
 import { LoginPopup } from '../LoginPopup/LoginPopup';
+import { Modal } from "../Modal/Modal";
+
 import './App.css';
+
 const config = require('../../config/default.json');
 
 class App extends Component {
   constructor() {
     super()
     this.ml = [];
+    this.errorModal = {};
+
     this.state = {
       channel: 0,
       sessionid: null,
       ws: null,
-      messageListener:[]
+      messageListener: [],
+      errorModal: {}
     };
   }
   componentWillMount() {
@@ -23,6 +29,7 @@ class App extends Component {
       this.setSessionID(sessionid);
     }
   }
+
   async login(data) {
     let response;
     if (data.mode === "guest") {
@@ -39,7 +46,13 @@ class App extends Component {
         { email: data.email, password: data.password }
       )
       if (response.xmlhttp.status !== 200) {
-        alert(response.data.error);
+        this.setState({
+          ...this.state,
+          errorModal: {
+            text: response.data.error,
+            show: true
+          }
+        });
         return;
       }  
     }
@@ -88,6 +101,17 @@ class App extends Component {
     });
     localStorage.setItem("sessionid", sessionid);
   }
+
+  handleModalResponse = response => {
+    console.log(response);
+    this.setState({
+      ...this.state,
+      errorModal: {
+        response,
+        show: false
+      }
+    });
+  }
   render() {
     return (
       <div className="App">
@@ -105,6 +129,13 @@ class App extends Component {
           sessionid={this.state.sessionid}
           onmessage={this.registerMessageListener.bind(this)}
           ws={this.state.ws}
+        />
+        <Modal
+          show={this.state.errorModal.show}
+          text={this.state.errorModal.text}
+          title="Login Error"
+          buttonText="Close"
+          responseHandler={this.handleModalResponse}
         />
       </div>
     );
