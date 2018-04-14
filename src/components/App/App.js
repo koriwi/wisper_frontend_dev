@@ -30,7 +30,10 @@ class App extends Component {
         `${config.protocol}://${config.location}:${config.port}/guest/create`,
         { username: data.name }
       );
-      
+    if (response.xmlhttp.status !== 201) {
+      alert(response.data.error);
+      return;
+    }
     }
 
     if (data.mode === "login") {
@@ -39,9 +42,9 @@ class App extends Component {
         { email: data.email, password: data.password }
       )
       if (response.xmlhttp.status !== 200) {
-        alert(response.data.error);
+        alert(response.data.error || response.data.errors.validation[0].message);
         return;
-      }  
+      }
     }
     const sessionid = response.data.sessionid;
     this.setSessionID(sessionid);
@@ -61,17 +64,19 @@ class App extends Component {
         `${config.wsProtocol}://${config.location}:${config.wsPort}`,
         ["sessionid", this.state.sessionid]
       );
-      ws.onopen = (e) => {  };
+      ws.onerror = () => this.removeSessionID();
       ws.onmessage = (message) => {
         const parsed = JSON.parse(message.data);
         this.state.messageListener.filter(listener => listener.type === parsed.type).forEach(listener => {
           listener.f(parsed);
         });
       }
-      this.setState({
-        ...this.state,
-        ws
-      })
+      ws.onopen = () => (
+        this.setState({
+          ...this.state,
+          ws
+        })
+      )
     }
   }
 
@@ -88,13 +93,18 @@ class App extends Component {
     });
     localStorage.setItem("sessionid", sessionid);
   }
+
+  removeSessionID() {
+    this.setState({ ...this.state, sessionid: undefined, });
+    localStorage.removeItem("sessionid");
+  }
   render() {
     return (
       <div className="App">
         <LoginPopup
           connect={this.login.bind(this)}
           hide={!!this.state.sessionid}
-        />  
+        />
         <ChannelBar
           channelChange={this.changeChannel.bind(this)}
           channel={this.state.channel}
